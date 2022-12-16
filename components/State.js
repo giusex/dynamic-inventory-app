@@ -7,53 +7,53 @@ const State = props => {
   if (width < 600) {
     return (
       <>
-        {props.state.toUpperCase() == 'DA FARE' && (
+        {props.state.toUpperCase() === 'DA FARE' ? (
           <View style={[styles.minStateSize, { backgroundColor: '#F5E6FE' }]}>
             <Text style={[styles.minStateTextSize, { color: '#642689' }]}>
               {props.state.toUpperCase()}
             </Text>
           </View>
-        )}
-        {props.state.toUpperCase() == 'IN CORSO' && (
+        ) : null}
+        {props.state.toUpperCase() === 'IN CORSO' ? (
           <View style={[styles.minStateSize, { backgroundColor: '#E3F8FA' }]}>
             <Text style={[styles.minStateTextSize, { color: '#26C6DA' }]}>
               {props.state.toUpperCase()}
             </Text>
           </View>
-        )}
-        {props.state.toUpperCase() == 'COMPLETATO' && (
+        ) : null}
+        {props.state.toUpperCase() === 'COMPLETATO' ? (
           <View style={[styles.minStateSize, { backgroundColor: '#D8FFDC' }]}>
             <Text style={[styles.minStateTextSize, { color: '#26BA85' }]}>
               {props.state.toUpperCase()}
             </Text>
           </View>
-        )}
+        ) : null}
       </>
     );
   } else {
     return (
       <>
-        {props.state.toUpperCase() == 'DA FARE' && (
+        {props.state.toUpperCase() === 'DA FARE' ? (
           <View style={[styles.maxStateSize, { backgroundColor: '#F5E6FE' }]}>
             <Text style={[styles.maxStateTextSize, { color: '#642689' }]}>
               {props.state.toUpperCase()}
             </Text>
           </View>
-        )}
-        {props.state.toUpperCase() == 'IN CORSO' && (
+        ) : null}
+        {props.state.toUpperCase() === 'IN CORSO' ? (
           <View style={[styles.maxStateSize, { backgroundColor: '#E3F8FA' }]}>
             <Text style={[styles.maxStateTextSize, { color: '#26C6DA' }]}>
               {props.state.toUpperCase()}
             </Text>
           </View>
-        )}
-        {props.state.toUpperCase() == 'COMPLETATO' && (
+        ) : null}
+        {props.state.toUpperCase() == 'COMPLETATO' ? (
           <View style={[styles.maxStateSize, { backgroundColor: '#D8FFDC' }]}>
             <Text style={[styles.maxStateTextSize, { color: '#26BA85' }]}>
               {props.state.toUpperCase()}
             </Text>
           </View>
-        )}
+        ) : null}
       </>
     );
   }

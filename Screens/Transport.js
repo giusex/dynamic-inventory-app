@@ -239,6 +239,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     flexDirection: 'row',
+    marginBottom: 20,
   },
   minTruckSize: {
     width: 80,

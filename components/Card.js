@@ -91,8 +91,8 @@ const Card = props => {
 
 const styles = StyleSheet.create({
   minDimension: {
-    width: 110,
-    height: 110,
+    width: 100,
+    height: 100,
   },
   maxDimension: {
     width: 180,

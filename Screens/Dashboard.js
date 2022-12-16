@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 20,
     marginRight: 20,
+    marginBottom: 20,
   },
 });
 

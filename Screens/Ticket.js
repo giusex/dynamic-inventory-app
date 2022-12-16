@@ -152,12 +152,12 @@ const Ticket = ({ route }) => {
                     getState('da fare');
                   }}>
                   <View style={styles.row}>
-                    <MaterialIcons name="clear" size={24} color="#FF603E" />
+                    <MaterialIcons name="clear" size={width < 600 ? 18 : 24} color="#FF603E" />
                     <Text
                       style={[
                         styles.textBottom,
                         { color: '#FF603E', marginLeft: 7 },
-                        width < 600 ? { fontSize: 13 } : { fontSize: 15 },
+                        width < 600 ? { fontSize: 11 } : { fontSize: 15 },
                       ]}>
                       NON COMPLETATO
                     </Text>
@@ -167,12 +167,12 @@ const Ticket = ({ route }) => {
                   style={{ ...styles.button, backgroundColor: '#26BA85' }}
                   onPress={toggleConfirmModal}>
                   <View style={styles.row}>
-                    <AntDesign name="checkcircleo" size={24} color="#FFFFFF" />
+                    <AntDesign name="checkcircleo" size={width < 600 ? 18 : 24} color="#FFFFFF" />
                     <Text
                       style={[
                         styles.textBottom,
                         { color: '#FFFFFF', marginLeft: 7 },
-                        width < 600 ? { fontSize: 13 } : { fontSize: 15 },
+                        width < 600 ? { fontSize: 11 } : { fontSize: 15 },
                       ]}>
                       COMPLETATO
                     </Text>

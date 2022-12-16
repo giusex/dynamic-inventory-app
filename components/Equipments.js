@@ -101,7 +101,7 @@ const ListCard = props => {
                   </View>
 
                   <View style={{ flex: 1 }}>
-                    <Text style={{...styles.textTwo, fontSize:12 }}>Q.tà: {item.quantity}</Text>
+                    <Text style={{...styles.textTwo, fontSize:10 }}>Q.tà: {item.quantity}</Text>
                   </View>
 
                   <View
@@ -111,11 +111,11 @@ const ListCard = props => {
                       justifyContent: 'flex-end',
                     }}>
                     {item.availability === 'DISPONIBILE' ? (
-                      <Text style={{ ...styles.textThree, color: '#26BA85', fontSize: 12 }}>
+                      <Text style={{ ...styles.textThree, color: '#26BA85', fontSize: 11 }}>
                         {item.availability}
                       </Text>
                     ) : (
-                      <Text style={{ ...styles.textThree, color: '#676D81',fontSize: 12 }}>
+                      <Text style={{ ...styles.textThree, color: '#676D81',fontSize: 11 }}>
                         MANCANO: {item.availability}
                       </Text>
                     )}

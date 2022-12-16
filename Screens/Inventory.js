@@ -72,11 +72,11 @@ const Inventory = () => {
                         }}
                         key={item.id}>
                         <View style={{ flex: 4 }}>
-                          <Text style={styles.textOne}>{item.description}</Text>
+                          <Text style={styles.minTextOneSize}>{item.description}</Text>
                         </View>
 
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.textTwo}>
+                          <Text style={styles.minTextTwoSize}>
                             Q.tà: {item.quantity}
                           </Text>
                         </View>
@@ -88,7 +88,7 @@ const Inventory = () => {
                             justifyContent: 'flex-end',
                           }}>
                           <Text
-                            style={{ ...styles.textThree, color: '#26BA85' }}>
+                            style={{ ...styles.minTextThreeSize, color: '#26BA85' }}>
                             {item.availability}
                           </Text>
                         </View>
@@ -168,11 +168,11 @@ const Inventory = () => {
                         }}
                         key={item.id}>
                         <View style={{ flex: 3 }}>
-                          <Text style={styles.textOne}>{item.description}</Text>
+                          <Text style={styles.minTextOneSize}>{item.description}</Text>
                         </View>
 
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.textTwo}>
+                          <Text style={styles.minTextTwoSize}>
                             Q.tà: {item.quantity}
                           </Text>
                         </View>
@@ -184,7 +184,7 @@ const Inventory = () => {
                             justifyContent: 'flex-end',
                           }}>
                           <Text
-                            style={{ ...styles.textThree, color: '#26BA85' }}>
+                            style={{ ...styles.minTextThreeSize, color: '#26BA85' }}>
                             {item.availability}
                           </Text>
                         </View>
