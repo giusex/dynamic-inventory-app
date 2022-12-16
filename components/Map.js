@@ -17,20 +17,17 @@ const Map = props => {
   return (
     <TouchableOpacity onPress={() => goToDestination()}>
       <View
-        style={[
-          styles.container,
-          props.modal
-            ? { borderColor: '#FF603E', backgroundColor: '#FFFFFF' }
-            : null,
-        ]}>
+        style={{
+          ...styles.container,
+          backgroundColor: props.backgroundColor,
+          borderColor: props.borderColor,
+        }}>
         <MaterialIcons
           name="directions"
           size={20}
-          {...(props.modal ? { color: '#FF603E' } : { color: '#FFFFFF' })}
+          style={{ color: props.iconColor }}
         />
-        <Text style={[styles.text, props.modal ? { color: '#FF603E' } : null]}>
-          Indicazioni
-        </Text>
+        <Text style={{...styles.text, color: props.color}}>Indicazioni</Text>
       </View>
     </TouchableOpacity>
   );
@@ -40,8 +37,6 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 10,
     borderWidth: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    borderColor: 'rgba(0, 0, 0, 0.2)',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -49,7 +44,6 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 15,
-    color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
   },

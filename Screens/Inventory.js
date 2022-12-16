@@ -6,9 +6,15 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
+import address from '../config/Global';
+
+const { width, height } = Dimensions.get('window');
 
 const Inventory = () => {
+  const link = address();
+
   let [inventory, setInventory] = useState([]);
   let [refreshing, setRefreshing] = useState(false);
   let [spinner, setSpinner] = useState(true);
@@ -24,7 +30,7 @@ const Inventory = () => {
   }, [refreshing]);
 
   const getInventory = () => {
-    fetch('http://192.168.1.56:8000/api/EquipmentEssential/1/1')
+    fetch(`${link}/api/EquipmentEssential/1/1`)
       .then(response => response.json())
       .then(json => setInventory(Object.values(json['hydra:member'])))
       .then(setSpinner(false))
@@ -41,9 +47,105 @@ const Inventory = () => {
         <ActivityIndicator />
       ) : (
         <>
-          {inventory ? (
-            <View>
-              <Text style={styles.title}>Materiali da utilizzare oggi</Text>
+          {inventory && width < 600 ? (
+            <View style={styles.height}>
+              <Text style={[styles.title, styles.minTitleSize]}>Materiali da utilizzare oggi</Text>
+              <ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }>
+                <View style={styles.view}>
+                  <Text style={styles.titleTwo}>
+                    MATERIALI PRESENTI SUL FURGONE
+                  </Text>
+                  {inventory.map(item => {
+                    return item.availability === 'CARICATO' ? (
+                      <View
+                        style={{
+                          ...styles.row,
+                          borderBottomWidth: 1,
+                          borderBottomColor: '#D9D9D9',
+                          padding: 7,
+                        }}
+                        key={item.id}>
+                        <View style={{ flex: 4 }}>
+                          <Text style={styles.textOne}>{item.description}</Text>
+                        </View>
+
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.textTwo}>
+                            Q.tà: {item.quantity}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            ...styles.row,
+                            flex: 2,
+                            justifyContent: 'flex-end',
+                          }}>
+                          <Text
+                            style={{ ...styles.textThree, color: '#26BA85' }}>
+                            {item.availability}
+                          </Text>
+                        </View>
+                      </View>
+                    ) : null;
+                  })}
+
+                  <Text style={{ ...styles.titleTwo, marginTop: 35 }}>
+                    MATERIALI DA CARICARE
+                  </Text>
+
+                  {inventory.map(item => {
+                    return item.availability === 'DA CARICARE' ? (
+                      <View
+                        style={{
+                          ...styles.row,
+                          borderBottomWidth: 1,
+                          borderBottomColor: '#D9D9D9',
+                          padding: 7,
+                        }}
+                        key={item.id}>
+                        <View style={{ flex: 4 }}>
+                          <Text style={styles.minTextOneSize}>
+                            {item.description}
+                          </Text>
+                        </View>
+
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.minTextTwoSize}>
+                            Q.tà: {item.quantity}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            ...styles.row,
+                            flex: 2,
+                            justifyContent: 'flex-end',
+                          }}>
+                          <Text
+                            style={[
+                              styles.minTextThreeSize,
+                              { color: '#26C6DA' },
+                            ]}>
+                            {item.availability}
+                          </Text>
+                        </View>
+                      </View>
+                    ) : null;
+                  })}
+                </View>
+              </ScrollView>
+            </View>
+          ) : null}
+          {inventory && width > 599 ? (
+            <View style={styles.height}>
+              <Text style={[styles.title, styles.maxTitleSize]}>Materiali da utilizzare oggi</Text>
               <ScrollView
                 refreshControl={
                   <RefreshControl
@@ -104,12 +206,14 @@ const Inventory = () => {
                           padding: 7,
                         }}
                         key={item.id}>
-                        <View style={{ flex: 3 }}>
-                          <Text style={styles.textOne}>{item.description}</Text>
+                        <View style={{ flex: 4 }}>
+                          <Text style={styles.maxTextOneSize}>
+                            {item.description}
+                          </Text>
                         </View>
 
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.textTwo}>
+                          <Text style={styles.maxTextTwoSize}>
                             Q.tà: {item.quantity}
                           </Text>
                         </View>
@@ -117,11 +221,14 @@ const Inventory = () => {
                         <View
                           style={{
                             ...styles.row,
-                            flex: 1,
+                            flex: 2,
                             justifyContent: 'flex-end',
                           }}>
                           <Text
-                            style={{ ...styles.textThree, color: '#26C6DA' }}>
+                            style={[
+                              styles.maxTextThreeSize,
+                              { color: '#26C6DA' },
+                            ]}>
                             {item.availability}
                           </Text>
                         </View>
@@ -139,8 +246,16 @@ const Inventory = () => {
 };
 
 const styles = StyleSheet.create({
+  height: {
+    height: '95%',
+  },
+  minTitleSize:{
+    fontSize: 18
+  },
+  maxTitleSize:{
+    fontSize: 24
+  },
   title: {
-    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 22,
     color: '#000000',
@@ -165,17 +280,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     underline: { textDecorationLine: 'underline' },
   },
-  textOne: {
+
+  minTextOneSize: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'black',
+  },
+  minTextTwoSize: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#676D81',
+  },
+  minTextThreeSize: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  maxTextOneSize: {
     fontSize: 16,
     fontWeight: '700',
     color: 'black',
   },
-  textTwo: {
+  maxTextTwoSize: {
     fontSize: 14,
     fontWeight: '400',
     color: '#676D81',
   },
-  textThree: {
+  maxTextThreeSize: {
     fontSize: 14,
     fontWeight: '700',
   },

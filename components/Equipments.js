@@ -1,13 +1,24 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet, Text, Pressable } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Pressable,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 import Map from './Map';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
+import address from '../config/Global';
+
+const { width, height } = Dimensions.get('window');
 
 const ListCard = props => {
   const NUM_OF_LINES = 5;
+  const link = address();
 
   const [loadMore, setLoadMore] = useState(false);
 
@@ -33,14 +44,14 @@ const ListCard = props => {
 
   let getEquipments = () => {
     /* /api/EquipmentEssential/{vehicleId}/{userId}/{ticketId} */
-    fetch(`http://192.168.1.56:8000/api/EquipmentEssential/1/1/${props.id}`)
+    fetch(`${link}/api/EquipmentEssential/1/1/${props.id}`)
       .then(response => response.json())
       .then(json => setEquipments(Object.values(json['hydra:member'])))
       .catch(error => console.error(error));
   };
 
   let getSearchEquipments = id => {
-    fetch(`http://192.168.1.56:8000/api/SearchEquipment/${id}/1`)
+    fetch(`${link}/api/SearchEquipment/${id}/1`)
       .then(response => response.json())
       .then(json => setSearchEquipments(Object.values(json['hydra:member'])))
       .catch(error => console.error(error));
@@ -73,7 +84,7 @@ const ListCard = props => {
             )}
           </View>
         ) : null}
-        {props.titleOne === 'MATERIALI DA UTILIZZARE' ? (
+        {props.titleOne === 'MATERIALI DA UTILIZZARE' && width < 600 ? (
           <>
             {equipments.map(item => {
               return (
@@ -86,25 +97,25 @@ const ListCard = props => {
                   }}
                   key={item.id}>
                   <View style={{ flex: 3 }}>
-                    <Text style={styles.textOne}>{item.description}</Text>
+                    <Text style={{...styles.textOne, fontSize:14 }}>{item.description}</Text>
                   </View>
 
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.textTwo}>Q.tà: {item.quantity}</Text>
+                    <Text style={{...styles.textTwo, fontSize:12 }}>Q.tà: {item.quantity}</Text>
                   </View>
 
                   <View
                     style={{
                       ...styles.row,
-                      flex: 1,
+                      flex: 2,
                       justifyContent: 'flex-end',
                     }}>
                     {item.availability === 'DISPONIBILE' ? (
-                      <Text style={{ ...styles.textThree, color: '#26BA85' }}>
+                      <Text style={{ ...styles.textThree, color: '#26BA85', fontSize: 12 }}>
                         {item.availability}
                       </Text>
                     ) : (
-                      <Text style={{ ...styles.textThree, color: '#676D81' }}>
+                      <Text style={{ ...styles.textThree, color: '#676D81',fontSize: 12 }}>
                         MANCANO: {item.availability}
                       </Text>
                     )}
@@ -125,7 +136,57 @@ const ListCard = props => {
               );
             })}
           </>
-        ) : null}
+        ) : (          <>
+          {equipments.map(item => {
+            return (
+              <View
+                style={{
+                  ...styles.row,
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#D9D9D9',
+                  padding: 7,
+                }}
+                key={item.id}>
+                <View style={{ flex: 3 }}>
+                  <Text style={styles.textOne}>{item.description}</Text>
+                </View>
+
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.textTwo}>Q.tà: {item.quantity}</Text>
+                </View>
+
+                <View
+                  style={{
+                    ...styles.row,
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                  }}>
+                  {item.availability === 'DISPONIBILE' ? (
+                    <Text style={{ ...styles.textThree, color: '#26BA85' }}>
+                      {item.availability}
+                    </Text>
+                  ) : (
+                    <Text style={{ ...styles.textThree, color: '#676D81' }}>
+                      MANCANO: {item.availability}
+                    </Text>
+                  )}
+
+                  {item.availability !== 'DISPONIBILE' ? (
+                    <MaterialCommunityIcons
+                      name="text-search"
+                      size={20}
+                      color="black"
+                      style={{ marginLeft: 10 }}
+                      onPress={() =>
+                        toggleSearchModal(item.id, item.description)
+                      }
+                    />
+                  ) : null}
+                </View>
+              </View>
+            );
+          })}
+        </>)}
         {props.titleOne === 'NOTE' ? (
           <View>
             <Text
@@ -156,7 +217,11 @@ const ListCard = props => {
         animationOut="slideOutRight"
         animationInTiming={500}
         animationOutTiming={700}>
-        <View style={styles.searchModalView}>
+        <View
+          style={[
+            styles.searchModalView,
+            width < 600 ? { width: '80%' } : { width: '50%' },
+          ]}>
           <View style={styles.border}>
             <View style={{ ...styles.titleContainer, marginTop: 40 }}>
               <View style={{ ...styles.row, justifyContent: 'space-between' }}>
@@ -173,59 +238,91 @@ const ListCard = props => {
               </Text>
             </View>
           </View>
-          {searchEquipments.map(item => {
-            return (
-              <View style={styles.border} key={item.id}>
-                <View
-                  style={{
-                    ...styles.titleContainer,
-                    flexDirection: 'row',
-                  }}>
-                  <View style={{ flex: 1 }}>
-                    <MaterialIcons
-                      name="local-shipping"
-                      size={33}
-                      color="#676D81"
-                    />
-                  </View>
-
-                  <View style={{ flex: 4 }}>
-                    <Text style={styles.truckTitle}>
-                      {item.brand} {item.model}
-                    </Text>
-                    <Text style={{ ...styles.truckDescription, marginTop: 10 }}>
-                      Utilizzato da: {item.name}
-                    </Text>
-
-                    <View style={{ ...styles.row, marginTop: 4 }}>
-                      <FontAwesome name="phone" size={13} color="#000000" />
-                      <Text
-                        style={{
-                          ...styles.truckTitle,
-                          marginLeft: 7,
-                        }}>
-                        {item.telephone}
-                      </Text>
-                    </View>
-
-                    <View style={{ width: 150, marginTop: 20 }}>
-                      <Map
-                        modal={true}
-                        latitude={item.latitude}
-                        longitude={item.longitude}
+          <ScrollView>
+            {searchEquipments.map(item => {
+              return (
+                <View style={styles.border} key={item.id}>
+                  <View
+                    style={{
+                      ...styles.titleContainer,
+                      flexDirection: 'row',
+                    }}>
+                    <View style={{ flex: 1 }}>
+                      <MaterialIcons
+                        name="local-shipping"
+                        size={33}
+                        color="#676D81"
                       />
                     </View>
-                  </View>
-                  <View style={{ flex: 2 }}>
-                    <Text style={styles.kmText}>a {item.distance} km</Text>
-                    {!item.stateGPS ? (
-                      <Text style={{ fontStyle: 'italic' }}>Offline</Text>
-                    ) : null}
+
+                    <View style={{ flex: 4 }}>
+                      <Text
+                        style={[
+                          styles.truckTitle,
+                          !item.available ? { color: '#676D81' } : null,
+                        ]}>
+                        {item.brand} {item.model}
+                      </Text>
+                      <Text
+                        style={{ ...styles.truckDescription, marginTop: 10 }}>
+                        Pezzi disponibili: {item.quantity}
+                      </Text>
+                      <Text style={styles.truckDescription}>
+                        Utilizzato da: {item.name}
+                      </Text>
+
+                      <View style={{ ...styles.row, marginTop: 4 }}>
+                        <FontAwesome name="phone" size={13} color="#000000" />
+                        <Text
+                          style={{
+                            ...styles.truckTitle,
+                            marginLeft: 7,
+                          }}>
+                          {item.telephone}
+                        </Text>
+                      </View>
+
+                      <View style={{ width: 150, marginTop: 20 }}>
+                        <Map
+                          modal={true}
+                          latitude={item.latitude}
+                          longitude={item.longitude}
+                          color={
+                            item.available
+                              ? (color = '#FF603E')
+                              : (color = '#676D81')
+                          }
+                          backgroundColor={(backgroundColor = '#FFFFFF')}
+                          borderColor={
+                            item.available
+                              ? (borderColor = '#FF603E')
+                              : (borderColor = '#676D81')
+                          }
+                          iconColor={
+                            item.available
+                              ? (iconColor = '#FF603E')
+                              : (iconColor = '#676D81')
+                          }
+                        />
+                      </View>
+                    </View>
+                    <View style={{ flex: 2 }}>
+                      <Text
+                        style={[
+                          styles.kmText,
+                          !item.available ? { color: '#676D81' } : null,
+                        ]}>
+                        a {item.distance} km
+                      </Text>
+                      {!item.stateGPS ? (
+                        <Text style={{ fontStyle: 'italic' }}>Offline</Text>
+                      ) : null}
+                    </View>
                   </View>
                 </View>
-              </View>
-            );
-          })}
+              );
+            })}
+          </ScrollView>
         </View>
       </Modal>
     </>
@@ -280,7 +377,6 @@ const styles = StyleSheet.create({
   },
   searchModalView: {
     flex: 1,
-    width: '50%',
     backgroundColor: '#FFFFFF',
   },
   titleContainer: {

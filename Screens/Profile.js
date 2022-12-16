@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
+  ScrollView,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Navbar from '../components/Navbar.js';
 import ProfileNavbar from '../components/ProfileNavbar.js';
@@ -22,7 +23,7 @@ const Map = props => {
         }
       />
       <ProfileNavbar />
-      <View style={styles.body}>
+      <ScrollView style={styles.body}>
         {/* NOME */}
         <View style={styles.view}>
           <View>
@@ -64,7 +65,7 @@ const Map = props => {
         </View>
         {/* DISCONETTI */}
         <View style={styles.view}>
-          <View>
+          <View style={{ flex: 1 }}>
             <Text style={styles.text}>Disconetti</Text>
             <Text style={styles.logoutText}>
               Scollega account da questo dispositivo
@@ -78,7 +79,7 @@ const Map = props => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  body: {margin: 24, marginTop: 30},
+  body: { margin: 24, marginTop: 30 },
   view: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   logoutText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '400',
     color: '#000000',
   },

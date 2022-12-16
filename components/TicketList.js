@@ -7,15 +7,18 @@ import {
   RefreshControl,
   FlatList,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import TicketButton from './TicketButton.js';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
+import address from '../config/Global';
+
+const { width, height } = Dimensions.get('window');
 
 const TicketList = () => {
-
-
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const link = address();
 
   let data = [];
 
@@ -46,7 +49,7 @@ const TicketList = () => {
   }, [refreshing]);
 
   const getTickets = () => {
-    fetch('http://192.168.1.56:8000/api/users/1/users_tickets')
+    fetch(`${link}/api/users/1/users_tickets`)
       .then(response => response.json())
       .then(json => setTickets(json))
       .then(setSpinner(false))
@@ -67,53 +70,68 @@ const TicketList = () => {
             <>
               <View style={styles.row}>
                 <View style={styles.containerTitle}>
-                  <Text style={styles.textTitle}>Ticket da svolgere oggi:</Text>
                   <Text
-                    style={{
-                      ...styles.textTitle,
-                      marginLeft: 5,
-                      color: '#FF603E',
-                    }}>
+                    style={[
+                      styles.textTitle,
+                      width < 600 ? { fontSize: 18 } : { fontSize: 22 },
+                    ]}>
+                    Ticket da svolgere oggi:
+                  </Text>
+                  <Text
+                    style={[
+                      styles.textTitle,
+                      { marginLeft: 5 },
+                      { color: '#FF603E' },
+                      width < 600 ? { fontSize: 18 } : { fontSize: 22 },
+                    ]}>
                     {numberTicket}
                   </Text>
                 </View>
                 <View>
-                  <Text style={styles.textFilter}>In ordine di priorità</Text>
+                  <Text
+                    style={[
+                      styles.textFilter,
+                      width < 600 ? { fontSize: 12 } : { fontSize: 14 },
+                    ]}>
+                    In ordine di priorità
+                  </Text>
                 </View>
               </View>
-              <FlatList
-                data={DATA}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('Ticket', {
-                        id: item.ticket.id,
-                        client: item.ticket.client,
-                        address: item.ticket.address,
-                        state: item.ticket.state,
-                        telephone: item.ticket.telephone,
-                        description: item.ticket.description,
-                        note: item.ticket.note,
-                        processing: getProcessing(),
-                      })
-                    }>
-                    <View style={styles.containerTicket}>
-                      <TicketButton
-                        client={item.ticket.client}
-                        address={item.ticket.address}
-                        state={item.ticket.state.toUpperCase()}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={item => item.ticket.id}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
-              />
+              <View style={styles.list}>
+                <FlatList
+                  data={DATA}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('Ticket', {
+                          id: item.ticket.id,
+                          client: item.ticket.client,
+                          address: item.ticket.address,
+                          state: item.ticket.state,
+                          telephone: item.ticket.telephone,
+                          description: item.ticket.description,
+                          note: item.ticket.note,
+                          processing: getProcessing(),
+                        })
+                      }>
+                      <View style={styles.containerTicket}>
+                        <TicketButton
+                          client={item.ticket.client}
+                          address={item.ticket.address}
+                          state={item.ticket.state.toUpperCase()}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={item => item.ticket.id}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
+                />
+              </View>
             </>
           ) : null}
         </>
@@ -130,10 +148,11 @@ const styles = StyleSheet.create({
     marginBottom: 22,
   },
   containerTitle: {
+    flex: 1,
     flexDirection: 'row',
+    alignItems: 'center',
   },
   textTitle: {
-    fontSize: 22,
     fontWeight: 'bold',
     color: 'black',
   },

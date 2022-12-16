@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,9 +19,14 @@ import Navbar from '../components/Navbar';
 import LargeNavbar from '../components/LargeNavbar';
 import Circle from '../components/Circle';
 import ModalStateChange from '../components/State';
+import addres from '../config/Global';
+
+const { width, height } = Dimensions.get('window');
 
 const Ticket = ({ route }) => {
   const navigation = useNavigation();
+  const link = addres();
+
   const id = route.params.id;
   const client = route.params.client;
   const address = route.params.address;
@@ -40,7 +46,7 @@ const Ticket = ({ route }) => {
   const getState = (state, note) => {
     // optional parameter
     note = note == null ? '' : note;
-    fetch(`http://192.168.1.56:8000/api/tickets/${id}`, {
+    fetch(`${link}/api/tickets/${id}`, {
       method: 'PUT',
       headers: {
         Accept: 'application/json',
@@ -148,11 +154,11 @@ const Ticket = ({ route }) => {
                   <View style={styles.row}>
                     <MaterialIcons name="clear" size={24} color="#FF603E" />
                     <Text
-                      style={{
-                        ...styles.textBottom,
-                        color: '#FF603E',
-                        marginLeft: 7,
-                      }}>
+                      style={[
+                        styles.textBottom,
+                        { color: '#FF603E', marginLeft: 7 },
+                        width < 600 ? { fontSize: 13 } : { fontSize: 15 },
+                      ]}>
                       NON COMPLETATO
                     </Text>
                   </View>
@@ -163,11 +169,11 @@ const Ticket = ({ route }) => {
                   <View style={styles.row}>
                     <AntDesign name="checkcircleo" size={24} color="#FFFFFF" />
                     <Text
-                      style={{
-                        ...styles.textBottom,
-                        color: '#FFFFFF',
-                        marginLeft: 7,
-                      }}>
+                      style={[
+                        styles.textBottom,
+                        { color: '#FFFFFF', marginLeft: 7 },
+                        width < 600 ? { fontSize: 13 } : { fontSize: 15 },
+                      ]}>
                       COMPLETATO
                     </Text>
                   </View>
@@ -179,72 +185,148 @@ const Ticket = ({ route }) => {
       </View>
 
       {/* Confirm Modal */}
-      <Modal isVisible={isConfirmModalVisible} transparent={true}>
-        <View style={styles.centeredModal}>
-          <View style={styles.modalView}>
-            <View>
-              <Text style={styles.title}>CONFERMA CAMBIO STATO TICKET:</Text>
-            </View>
-            <View style={{ marginTop: 22 }}>
-              <View style={{ flexDirection: 'row' }}>
-                <ModalStateChange state="IN CORSO" />
-                <Circle />
-                <ModalStateChange state="COMPLETATO" />
+      {width < 600 ? (
+        <Modal isVisible={isConfirmModalVisible} transparent={true}>
+            <View style={styles.modalView}>
+              <View>
+                <Text style={styles.title}>CONFERMA CAMBIO STATO TICKET:</Text>
+              </View>
+              <View style={{ marginTop: 22 }}>
+                <View style={{ flexDirection: 'row', justifyContent:"center", alignItems:"center"}}>
+                  <ModalStateChange state="IN CORSO" />
+                  <Circle />
+                  <ModalStateChange state="COMPLETATO" />
+                </View>
+              </View>
+              <View style={{ marginTop: 29 }}>
+                <TextInput
+                  style={[styles.minTextInput, styles.text]}
+                  placeholder="Inserisci nota conclusiva..."
+                  placeholderTextColor="#8D8D8D"
+                  onChangeText={note => setNote(note)}
+                  value={note}></TextInput>
+                <View
+                  style={{
+                    marginTop: 22,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItem:'center'
+                  }}>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.undoButton]}
+                    onPress={toggleConfirmModal}>
+                    <View style={styles.row}>
+                      <MaterialIcons name="clear" size={20} color="#676D81" />
+
+                      <Text
+                        style={{
+                          ...styles.textButton,
+                          color: '#676D81',
+                          marginLeft: 7,
+                        }}>
+                        ANNULLA
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.confirmButton]}
+                    onPress={() => {
+                      setConfirmModalVisible(false);
+                      getState('completato', note);
+                    }}>
+                    <View style={styles.row}>
+                      <AntDesign
+                        name="checkcircleo"
+                        size={20}
+                        color="#FFFFFF"
+                      />
+
+                      <Text
+                        style={{
+                          ...styles.textButton,
+                          color: '#FFFFFF',
+                          marginLeft: 7,
+                        }}>
+                        CONFERMA
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-            <View style={{ marginTop: 29 }}>
-              <TextInput
-                style={[styles.textInput, styles.text]}
-                placeholder="Inserisci nota conclusiva..."
-                placeholderTextColor="#8D8D8D"
-                onChangeText={note => setNote(note)}
-                value={note}></TextInput>
-              <View
-                style={{
-                  marginTop: 22,
-                  flexDirection: 'row',
-                  justifyContent: 'flex-end',
-                }}>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.undoButton]}
-                  onPress={toggleConfirmModal}>
-                  <View style={styles.row}>
-                    <MaterialIcons name="clear" size={20} color="#676D81" />
-
-                    <Text
-                      style={{
-                        ...styles.textButton,
-                        color: '#676D81',
-                        marginLeft: 7,
-                      }}>
-                      ANNULLA
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.modalButton, styles.confirmButton]}
-                  onPress={() => {
-                    setConfirmModalVisible(false);
-                    getState('completato', note);
+        </Modal>
+      ) : (
+        <Modal isVisible={isConfirmModalVisible} transparent={true}>
+          <View style={styles.centeredModal}>
+            <View style={styles.modalView}>
+              <View>
+                <Text style={styles.title}>CONFERMA CAMBIO STATO TICKET:</Text>
+              </View>
+              <View style={{ marginTop: 22 }}>
+                <View style={{ flexDirection: 'row' }}>
+                  <ModalStateChange state="IN CORSO" />
+                  <Circle />
+                  <ModalStateChange state="COMPLETATO" />
+                </View>
+              </View>
+              <View style={{ marginTop: 29 }}>
+                <TextInput
+                  style={[styles.textInput, styles.text]}
+                  placeholder="Inserisci nota conclusiva..."
+                  placeholderTextColor="#8D8D8D"
+                  onChangeText={note => setNote(note)}
+                  value={note}></TextInput>
+                <View
+                  style={{
+                    marginTop: 22,
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
                   }}>
-                  <View style={styles.row}>
-                    <AntDesign name="checkcircleo" size={20} color="#FFFFFF" />
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.undoButton]}
+                    onPress={toggleConfirmModal}>
+                    <View style={styles.row}>
+                      <MaterialIcons name="clear" size={20} color="#676D81" />
 
-                    <Text
-                      style={{
-                        ...styles.textButton,
-                        color: '#FFFFFF',
-                        marginLeft: 7,
-                      }}>
-                      CONFERMA
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                      <Text
+                        style={{
+                          ...styles.textButton,
+                          color: '#676D81',
+                          marginLeft: 7,
+                        }}>
+                        ANNULLA
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.modalButton, styles.confirmButton]}
+                    onPress={() => {
+                      setConfirmModalVisible(false);
+                      getState('completato', note);
+                    }}>
+                    <View style={styles.row}>
+                      <AntDesign
+                        name="checkcircleo"
+                        size={20}
+                        color="#FFFFFF"
+                      />
+
+                      <Text
+                        style={{
+                          ...styles.textButton,
+                          color: '#FFFFFF',
+                          marginLeft: 7,
+                        }}>
+                        CONFERMA
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      )}
     </>
   );
 };
@@ -272,6 +354,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#676D81',
     fontWeight: 'bold',
+  },
+  minTextInput: {
+    borderWidth: 1,
+    borderColor: '#8D8D8D',
+    borderRadius: 10,
+    height: 86,
   },
   textInput: {
     borderWidth: 1,
@@ -317,7 +405,6 @@ const styles = StyleSheet.create({
   },
   textBottom: {
     fontWeight: 'bold',
-    fontSize: 15,
   },
   row: {
     flexDirection: 'row',

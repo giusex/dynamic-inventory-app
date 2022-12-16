@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Navbar from '../components/Navbar.js';
 import Card from '../components/Card.js';
@@ -7,8 +13,10 @@ import TicketList from '../components/TicketList.js';
 import Inventory from './Inventory.js';
 import Transport from './Transport.js';
 
+const { width, height } = Dimensions.get('window');
+
 const Dashboard = () => {
-  const ICON_BIG_DIM = 35;
+  const ICON_BIG_DIM = width < 600 ? 22 : 35;
   const ICON_LITTLE_DIM = 18;
 
   const card = {
@@ -55,7 +63,11 @@ const Dashboard = () => {
         />
       </View>
       {/* Card */}
-      <View style={styles.cardContainer}>
+      <View
+        style={[
+          styles.cardContainer,
+          width < 600 ? { height: 90 } : { height: 134 },
+        ]}>
         <Pressable
           onPress={() => {
             setActive(card.ticket.value);
@@ -96,8 +108,15 @@ const Dashboard = () => {
           />
         </Pressable>
       </View>
+
       {/* Body */}
-      <View style={styles.body}>{getView()}</View>
+      <View
+        style={[
+          styles.body,
+          width < 600 ? { marginTop: 100 } : { marginTop: 125 },
+        ]}>
+        {getView()}
+      </View>
     </View>
   );
 };
@@ -108,14 +127,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   cardContainer: {
-    height: 134,
     backgroundColor: '#FF603E',
     flexDirection: 'row',
     justifyContent: 'center',
   },
   body: {
-    flex:1,
-    marginTop: 125,
+    flex: 1,
     marginLeft: 20,
     marginRight: 20,
   },
